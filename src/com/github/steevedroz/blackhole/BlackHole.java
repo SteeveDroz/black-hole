@@ -1,9 +1,15 @@
 package com.github.steevedroz.blackhole;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
 public class BlackHole extends AnchorPane {
     private int size;
+
+    private List<BlackHoleBox> boxes;
 
     public BlackHole(int size) throws BadSizeException {
 	if (!BlackHole.checkSize(size)) {
@@ -12,6 +18,8 @@ public class BlackHole extends AnchorPane {
 			    + BlackHole.triangularValue(size) + ")");
 	}
 	this.size = size;
+	generateBoxes();
+	getChildren().add(new Label("Taille : " + size));
     }
 
     public static boolean checkSize(int size) {
@@ -24,5 +32,30 @@ public class BlackHole extends AnchorPane {
 
     public int getSize() {
 	return size;
+    }
+
+    private void generateBoxes() {
+	boxes = new ArrayList<BlackHoleBox>();
+	for (int i = 0; i < triangularValue(size); i++) {
+	    BlackHoleBox box = new BlackHoleBox();
+	    boxes.add(box);
+	    getChildren().add(box);
+	}
+
+	int width = size;
+	int counter = width;
+	for (int i = 0; i < boxes.size(); i++) {
+	    if (width < size) {
+		boxes.get(i).addNeighbor(boxes.get(i - width));
+		boxes.get(i).addNeighbor(boxes.get(i - width - 1));
+	    }
+	    if (counter == 1) {
+		width--;
+		counter = width;
+	    } else {
+		boxes.get(i).addNeighbor(boxes.get(i + 1));
+		counter--;
+	    }
+	}
     }
 }
