@@ -3,6 +3,9 @@ package com.github.steevedroz.blackhole;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.event.EventHandler;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 
@@ -22,12 +25,29 @@ public class BlackHole extends AnchorPane {
 			    + BlackHole.triangularValue(size) + ")");
 	}
 	this.size = size;
+	reinitialize();
+	setFocusTraversable(true);
+	requestFocus();
+	setEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
+	    @Override
+	    public void handle(KeyEvent event) {
+		if (event.getCode().equals(KeyCode.X)) {
+		    reinitialize();
+		}
+	    }
+	});
+    }
+
+    public void reinitialize() {
+	getChildren().clear();
 	this.freeBoxes = triangularValue(size);
 	generateBoxes();
 
+	players = null;
+	initialize();
     }
 
-    public static void initializePlayers() {
+    public static void initialize() {
 	if (players == null) {
 	    players = new ArrayList<BlackHolePlayer>();
 	    players.add(new BlackHolePlayer("Player 1", Color.RED));
@@ -39,7 +59,7 @@ public class BlackHole extends AnchorPane {
     }
 
     public static BlackHoleNumber nextNumber() {
-	initializePlayers();
+	initialize();
 	BlackHoleNumber number = new BlackHoleNumber(players.get(move % players.size()), move / players.size() + 1);
 	move++;
 	return number;
@@ -50,7 +70,7 @@ public class BlackHole extends AnchorPane {
     }
 
     public static boolean checkSize(int size) {
-	initializePlayers();
+	initialize();
 	return BlackHole.triangularValue(size) % BlackHole.players.size() == 1;
     }
 
