@@ -2,21 +2,36 @@ package com.github.steevedroz.blackhole;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 
-public class BlackHoleBox extends Ellipse {
+public class BlackHoleBox extends Pane {
     private List<BlackHoleBox> neighbors;
     private BlackHoleNumber number;
 
-    private static Random random = new Random();
-
     public BlackHoleBox() {
-	super(random.nextInt(360) + 20, random.nextInt(360) + 20, 20, 20);
+	Ellipse ellipse = new Ellipse(20, 20, 20, 20);
+	ellipse.setFill(null);
+	ellipse.setStroke(Color.BLACK);
+	ellipse.setStrokeWidth(2);
+	getChildren().add(ellipse);
 
 	this.neighbors = new ArrayList<BlackHoleBox>();
 	this.number = null;
+
+	addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<Event>() {
+	    @Override
+	    public void handle(Event event) {
+		if (number == null) {
+		    setNumber(BlackHole.nextNumber());
+		}
+	    }
+	});
     }
 
     public void addNeighbor(BlackHoleBox neighbor) {
@@ -38,5 +53,6 @@ public class BlackHoleBox extends Ellipse {
 
     public void setNumber(BlackHoleNumber number) {
 	this.number = number;
+	getChildren().add(number);
     }
 }
