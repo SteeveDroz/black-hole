@@ -17,22 +17,21 @@ public class Main extends Application {
 	    Scene scene = new Scene(root, 400, 400);
 	    scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 
+	    BlackHole blackHole = new BlackHole();
+
 	    ComboBox<Integer> sizePicker = new ComboBox<Integer>();
 	    sizePicker.getItems().add(null);
 	    for (int i = 3; i < 15; i++) {
-		if (BlackHole.checkSize(i)) {
+		if (blackHole.checkSize(i)) {
 		    sizePicker.getItems().add(i);
 		}
 	    }
 	    sizePicker.addEventHandler(ActionEvent.ACTION, new EventHandler<Event>() {
 		@Override
 		public void handle(Event event) {
-		    try {
-			if (sizePicker.getValue() != null) {
-			    root.setCenter(new BlackHole(sizePicker.getValue()));
-			}
-		    } catch (BadSizeException e) {
-			sizePicker.setValue(null);
+		    if (sizePicker.getValue() != null) {
+			blackHole.setSize(sizePicker.getValue());
+			root.setCenter(blackHole);
 		    }
 		}
 	    });

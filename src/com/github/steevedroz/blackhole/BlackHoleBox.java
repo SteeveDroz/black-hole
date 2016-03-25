@@ -29,8 +29,8 @@ public class BlackHoleBox extends Pane {
 	addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<Event>() {
 	    @Override
 	    public void handle(Event event) {
-		if (number == null && BlackHole.isPlayable()) {
-		    setNumber(BlackHole.nextNumber());
+		if (number == null && parent.isPlayable()) {
+		    setNumber(parent.nextNumber());
 		}
 	    }
 	});

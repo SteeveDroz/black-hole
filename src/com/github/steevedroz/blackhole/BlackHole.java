@@ -10,68 +10,54 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 
 public class BlackHole extends AnchorPane {
-    private static List<BlackHolePlayer> players;
-    private static int move;
-    private static boolean playable;
+    private List<BlackHolePlayer> players;
+    private int move;
+    private boolean playable;
 
     private int size;
     private List<BlackHoleBox> boxes;
     private int freeBoxes;
 
-    public BlackHole(int size) throws BadSizeException {
-	if (!BlackHole.checkSize(size)) {
-	    throw new BadSizeException(
-		    "A triangle with " + size + " spaces on the side contains an even number of spaces ("
-			    + BlackHole.triangularValue(size) + ")");
-	}
-	this.size = size;
-	reinitialize();
+    public BlackHole() throws BadSizeException {
+	initialize();
 	setFocusTraversable(true);
 	requestFocus();
 	setEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
 	    @Override
 	    public void handle(KeyEvent event) {
 		if (event.getCode().equals(KeyCode.X)) {
-		    reinitialize();
+		    initialize();
 		}
 	    }
 	});
     }
 
-    public void reinitialize() {
+    private void initialize() {
 	getChildren().clear();
-	this.freeBoxes = triangularValue(size);
 	generateBoxes();
 
-	players = null;
-	initialize();
+	players = new ArrayList<BlackHolePlayer>();
+	players.add(new BlackHolePlayer("Player 1", Color.RED));
+	players.add(new BlackHolePlayer("Player 2", Color.BLUE));
+	// players.add(new BlackHolePlayer("Player 3", Color.YELLOW));
+
+	this.freeBoxes = triangularValue(size);
+	move = 0;
+	playable = true;
     }
 
-    public static void initialize() {
-	if (players == null) {
-	    players = new ArrayList<BlackHolePlayer>();
-	    players.add(new BlackHolePlayer("Player 1", Color.RED));
-	    players.add(new BlackHolePlayer("Player 2", Color.BLUE));
-	    // players.add(new BlackHolePlayer("Player 3", Color.YELLOW));
-	    move = 0;
-	    playable = true;
-	}
-    }
-
-    public static BlackHoleNumber nextNumber() {
-	initialize();
+    public BlackHoleNumber nextNumber() {
 	BlackHoleNumber number = new BlackHoleNumber(players.get(move % players.size()), move / players.size() + 1);
 	move++;
 	return number;
     }
 
-    public static boolean isPlayable() {
+    public boolean isPlayable() {
 	return playable;
     }
 
-    public static boolean checkSize(int size) {
-	initialize();
-	return BlackHole.triangularValue(size) % BlackHole.players.size() == 1;
+    public boolean checkSize(int size) {
+	return BlackHole.triangularValue(size) % players.size() == 1;
     }
 
     public static int triangularValue(int size) {
@@ -80,6 +66,11 @@ public class BlackHole extends AnchorPane {
 
     public int getSize() {
 	return size;
+    }
+
+    public void setSize(int size) {
+	this.size = size;
+	initialize();
     }
 
     private void generateBoxes() {
@@ -118,7 +109,7 @@ public class BlackHole extends AnchorPane {
     }
 
     private void endOfGame() {
-	BlackHole.playable = false;
+	playable = false;
 	for (BlackHoleBox box : boxes) {
 	    if (box.getNumber() == null) {
 		box.blackHole();
