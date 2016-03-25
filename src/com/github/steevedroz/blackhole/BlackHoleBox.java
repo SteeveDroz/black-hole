@@ -13,8 +13,9 @@ import javafx.scene.shape.Ellipse;
 public class BlackHoleBox extends Pane {
     private List<BlackHoleBox> neighbors;
     private BlackHoleNumber number;
+    private BlackHole parent;
 
-    public BlackHoleBox() {
+    public BlackHoleBox(BlackHole parent) {
 	Ellipse ellipse = new Ellipse(20, 20, 20, 20);
 	ellipse.setFill(null);
 	ellipse.setStroke(Color.BLACK);
@@ -23,11 +24,12 @@ public class BlackHoleBox extends Pane {
 
 	this.neighbors = new ArrayList<BlackHoleBox>();
 	this.number = null;
+	this.parent = parent;
 
 	addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<Event>() {
 	    @Override
 	    public void handle(Event event) {
-		if (number == null) {
+		if (number == null && BlackHole.isPlayable()) {
 		    setNumber(BlackHole.nextNumber());
 		}
 	    }
@@ -54,5 +56,12 @@ public class BlackHoleBox extends Pane {
     public void setNumber(BlackHoleNumber number) {
 	this.number = number;
 	getChildren().add(number);
+	parent.fillBox();
+    }
+
+    public void blackHole() {
+	for (BlackHoleBox neighbor : getNeighbors()) {
+	    neighbor.getNumber().getPlayer().addPoints(neighbor.getNumber().getValue());
+	}
     }
 }
