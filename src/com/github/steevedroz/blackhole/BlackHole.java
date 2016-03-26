@@ -1,27 +1,32 @@
 package com.github.steevedroz.blackhole;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 
 public class BlackHole extends AnchorPane {
-    private List<BlackHolePlayer> players;
-    private int move;
+    private Map<BlackHolePlayer, Integer> players;
+    private List<BlackHolePlayer> orderedPlayers;
+    private int activePlayer;
     private boolean playable;
 
     private int size;
     private List<BlackHoleBox> boxes;
     private int freeBoxes;
+    private BlackHoleBox blackHole;
 
-    public BlackHole() throws BadSizeException {
+    public BlackHole() {
 	initialize();
 	setFocusTraversable(true);
 	requestFocus();
+	players = new HashMap<BlackHolePlayer, Integer>();
+	orderedPlayers = new ArrayList<BlackHolePlayer>();
 	setEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
 	    @Override
 	    public void handle(KeyEvent event) {
@@ -36,20 +41,34 @@ public class BlackHole extends AnchorPane {
 	getChildren().clear();
 	generateBoxes();
 
-	players = new ArrayList<BlackHolePlayer>();
-	players.add(new BlackHolePlayer("Player 1", Color.RED));
-	players.add(new BlackHolePlayer("Player 2", Color.BLUE));
-	// players.add(new BlackHolePlayer("Player 3", Color.YELLOW));
+	activePlayer = 0;
 
 	this.freeBoxes = triangularValue(size);
-	move = 0;
 	playable = true;
+	blackHole = null;
     }
 
-    public BlackHoleNumber nextNumber() {
-	BlackHoleNumber number = new BlackHoleNumber(players.get(move % players.size()), move / players.size() + 1);
-	move++;
-	return number;
+    public void registerPlayer(BlackHolePlayer player) {
+	players.put(player, 1);
+	orderedPlayers.add(player);
+    }
+
+    public void start() {
+	setNumber(orderedPlayers.get(0), orderedPlayers.get(0).play(cloneOfBoxes()));
+    }
+
+    public BlackHoleNumber getNumberFromPlayer(BlackHolePlayer player) {
+	return new BlackHoleNumber(player, players.get(player));
+    }
+
+    public void setNumber(BlackHolePlayer player, int position) {
+	boxes.get(position).setNumber(getNumberFromPlayer(player));
+	players.put(player, players.get(player) + 1);
+	if (playable) {
+	    activePlayer++;
+	    BlackHolePlayer nextPlayer = orderedPlayers.get(activePlayer % orderedPlayers.size());
+	    setNumber(nextPlayer, nextPlayer.play(boxes));
+	}
     }
 
     public boolean isPlayable() {
@@ -108,20 +127,33 @@ public class BlackHole extends AnchorPane {
 	}
     }
 
+    public BlackHoleBox getBlackHole() {
+	return blackHole;
+    }
+
     private void endOfGame() {
 	playable = false;
 	for (BlackHoleBox box : boxes) {
 	    if (box.getNumber() == null) {
-		box.blackHole();
-		BlackHolePlayer winner = players.get(0);
-		for (BlackHolePlayer player : players) {
+		blackHole = box;
+		BlackHolePlayer winner = null;
+		for (BlackHolePlayer player : players.keySet()) {
+		    player.askForPoints(this);
 		    System.out.println(player.getName() + ": " + player.getPoints() + " point(s)");
-		    if (player.getPoints() < winner.getPoints()) {
+		    if (winner == null || player.getPoints() < winner.getPoints()) {
 			winner = player;
 		    }
 		}
 		System.out.println(winner.getName() + " wins!");
 	    }
 	}
+    }
+
+    private List<BlackHoleBox> cloneOfBoxes() {
+	List<BlackHoleBox> clone = new ArrayList<BlackHoleBox>();
+	for (BlackHoleBox box : boxes) {
+	    clone.add(box.cloneOf());
+	}
+	return clone;
     }
 }

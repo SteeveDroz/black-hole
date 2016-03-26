@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -18,6 +19,9 @@ public class Main extends Application {
 	    scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 
 	    BlackHole blackHole = new BlackHole();
+
+	    blackHole.registerPlayer(new RandomPlayer("Player 1", Color.RED));
+	    blackHole.registerPlayer(new RandomPlayer("Player 2", Color.BLUE));
 
 	    ComboBox<Integer> sizePicker = new ComboBox<Integer>();
 	    sizePicker.getItems().add(null);
@@ -32,6 +36,7 @@ public class Main extends Application {
 		    if (sizePicker.getValue() != null) {
 			blackHole.setSize(sizePicker.getValue());
 			root.setCenter(blackHole);
+			blackHole.start();
 		    }
 		}
 	    });

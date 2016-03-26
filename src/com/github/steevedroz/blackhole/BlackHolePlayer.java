@@ -1,10 +1,12 @@
 package com.github.steevedroz.blackhole;
 
+import java.util.List;
+
 import javafx.scene.paint.Color;
 
-public class BlackHolePlayer {
-    private String name;
-    private Color color;
+public abstract class BlackHolePlayer {
+    protected String name;
+    protected Color color;
     private int points;
 
     public BlackHolePlayer(String name, Color color) {
@@ -21,11 +23,15 @@ public class BlackHolePlayer {
 	return color;
     }
 
-    public void addPoints(int amount) {
-	points += amount;
+    public final void askForPoints(BlackHole game) {
+	if (game != null) {
+	    points = game.getBlackHole().getNeighborsPoints(this);
+	}
     }
 
-    public int getPoints() {
+    public final int getPoints() {
 	return points;
     }
+
+    public abstract int play(List<BlackHoleBox> boxes);
 }

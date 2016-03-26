@@ -37,4 +37,8 @@ public class BlackHoleNumber extends Pane {
     public int getValue() {
 	return value;
     }
+
+    public BlackHoleNumber cloneOf() {
+	return new BlackHoleNumber(player, value);
+    }
 }

@@ -3,9 +3,6 @@ package com.github.steevedroz.blackhole;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
@@ -25,15 +22,6 @@ public class BlackHoleBox extends Pane {
 	this.neighbors = new ArrayList<BlackHoleBox>();
 	this.number = null;
 	this.parent = parent;
-
-	addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<Event>() {
-	    @Override
-	    public void handle(Event event) {
-		if (number == null && parent.isPlayable()) {
-		    setNumber(parent.nextNumber());
-		}
-	    }
-	});
     }
 
     public void addNeighbor(BlackHoleBox neighbor) {
@@ -59,9 +47,21 @@ public class BlackHoleBox extends Pane {
 	parent.fillBox();
     }
 
-    public void blackHole() {
+    public int getNeighborsPoints(BlackHolePlayer player) {
+	int points = 0;
 	for (BlackHoleBox neighbor : getNeighbors()) {
-	    neighbor.getNumber().getPlayer().addPoints(neighbor.getNumber().getValue());
+	    if (neighbor.getNumber().getPlayer().equals(player)) {
+		points += neighbor.getNumber().getValue();
+	    }
 	}
+	return points;
+    }
+
+    public BlackHoleBox cloneOf() {
+	BlackHoleBox box = new BlackHoleBox(parent);
+	if (number != null) {
+	    box.number = number.cloneOf();
+	}
+	return box;
     }
 }
