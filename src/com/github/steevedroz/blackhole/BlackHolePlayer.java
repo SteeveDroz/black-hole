@@ -7,6 +7,7 @@ import javafx.scene.paint.Color;
 public abstract class BlackHolePlayer {
     protected String name;
     protected Color color;
+    protected int size;
     private int points;
 
     public BlackHolePlayer(String name, Color color) {
@@ -31,6 +32,10 @@ public abstract class BlackHolePlayer {
 
     public final int getPoints() {
 	return points;
+    }
+
+    public void setSize(int size) {
+	this.size = size;
     }
 
     public abstract int play(List<BlackHoleBox> boxes);
