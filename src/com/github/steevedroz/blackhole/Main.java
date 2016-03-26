@@ -32,6 +32,7 @@ public class Main extends Application {
 	ComboBox<String> playerPicker1 = new ComboBox<String>();
 	ComboBox<String> playerPicker2 = new ComboBox<String>();
 	Button go = new Button("GO");
+	ComboBox<Integer> sizePicker = new ComboBox<Integer>();
 
 	File ai = new File("ai/");
 	File[] aiPlayers = ai.listFiles();
@@ -40,13 +41,19 @@ public class Main extends Application {
 	    playerPicker2.getItems().add(file.getName());
 	}
 
+	for (int i = 4; i < 16; i++) {
+	    if (BlackHole.triangularValue(i) % 2 == 1) {
+		sizePicker.getItems().add(i);
+	    }
+	}
+
 	go.addEventHandler(ActionEvent.ACTION, new EventHandler<Event>() {
 
 	    @Override
 	    public void handle(Event event) {
 		registerPlayer(playerPicker1.getValue(), 1, Color.RED, blackHole);
 		registerPlayer(playerPicker2.getValue(), 2, Color.BLUE, blackHole);
-		blackHole.setSize(6);
+		blackHole.setSize(sizePicker.getValue());
 		root.setCenter(blackHole);
 		blackHole.start();
 	    }
@@ -55,6 +62,8 @@ public class Main extends Application {
 	box.getChildren().add(playerPicker1);
 	box.getChildren().add(new Label("vs"));
 	box.getChildren().add(playerPicker2);
+	box.getChildren().add(new Label("Size:"));
+	box.getChildren().add(sizePicker);
 	box.getChildren().add(go);
 
 	root.setCenter(box);

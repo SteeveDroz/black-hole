@@ -76,6 +76,9 @@ public class BlackHole extends AnchorPane {
     }
 
     public boolean checkSize(int size) {
+	if (players.size() == 0) {
+	    return false;
+	}
 	return BlackHole.triangularValue(size) % players.size() == 1;
     }
 
