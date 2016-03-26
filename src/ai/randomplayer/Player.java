@@ -1,15 +1,18 @@
-package com.github.steevedroz.blackhole;
+package ai.randomplayer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.github.steevedroz.blackhole.BlackHoleBox;
+import com.github.steevedroz.blackhole.BlackHolePlayer;
+
 import javafx.scene.paint.Color;
 
-public class RandomPlayer extends BlackHolePlayer {
+public class Player extends BlackHolePlayer {
     Random random;
 
-    public RandomPlayer(String name, Color color) {
+    public Player(String name, Color color) {
 	super(name, color);
 	random = new Random();
     }
