@@ -41,7 +41,10 @@ public class BlackHoleBox extends Pane {
 	return number;
     }
 
-    public void setNumber(BlackHoleNumber number) {
+    public void setNumber(BlackHoleNumber number) throws IllegalMoveException {
+	if (this.number != null) {
+	    throw new IllegalMoveException("This box is already taken.");
+	}
 	this.number = number;
 	getChildren().add(number);
 	parent.fillBox();

@@ -9,6 +9,8 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -23,10 +25,6 @@ public class Main extends Application {
 	BorderPane root = new BorderPane();
 	Scene scene = new Scene(root, 800, 800);
 	scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-
-	BlackHole blackHole = new BlackHole();
-	// blackHole.registerPlayer(new RandomPlayer("Player 1", Color.RED));
-	// blackHole.registerPlayer(new RandomPlayer("Player 2", Color.BLUE));
 
 	HBox box = new HBox(5);
 	ComboBox<String> playerPicker1 = new ComboBox<String>();
@@ -51,11 +49,21 @@ public class Main extends Application {
 
 	    @Override
 	    public void handle(Event event) {
-		registerPlayer(playerPicker1.getValue(), 1, Color.RED, blackHole);
-		registerPlayer(playerPicker2.getValue(), 2, Color.BLUE, blackHole);
-		blackHole.setSize(sizePicker.getValue());
-		root.setCenter(blackHole);
-		blackHole.start();
+		try {
+		    BlackHole blackHole = new BlackHole();
+		    registerPlayer(playerPicker1.getValue(), 1, Color.RED, blackHole);
+		    registerPlayer(playerPicker2.getValue(), 2, Color.BLUE, blackHole);
+		    blackHole.setSize(sizePicker.getValue());
+		    root.setCenter(blackHole);
+		    blackHole.start();
+		} catch (IllegalMoveException e) {
+		    Alert alert = new Alert(AlertType.ERROR);
+		    alert.setTitle("An error occured");
+		    alert.setHeaderText("Fatal error!");
+		    alert.setContentText(e.getMessage());
+		    alert.showAndWait();
+		    primaryStage.close();
+		}
 	    }
 	});
 

@@ -53,7 +53,10 @@ public class BlackHole extends AnchorPane {
 	orderedPlayers.add(player);
     }
 
-    public void start() {
+    public void start() throws IllegalMoveException {
+	for (BlackHolePlayer player : orderedPlayers) {
+	    player.setSize(size);
+	}
 	setNumber(orderedPlayers.get(0), orderedPlayers.get(0).play(cloneOfBoxes()));
     }
 
@@ -61,7 +64,7 @@ public class BlackHole extends AnchorPane {
 	return new BlackHoleNumber(player, players.get(player));
     }
 
-    public void setNumber(BlackHolePlayer player, int position) {
+    public void setNumber(BlackHolePlayer player, int position) throws IllegalMoveException {
 	boxes.get(position).setNumber(getNumberFromPlayer(player));
 	players.put(player, players.get(player) + 1);
 	if (playable) {
@@ -102,7 +105,10 @@ public class BlackHole extends AnchorPane {
 	    boxes.add(box);
 	    getChildren().add(box);
 	}
+	BlackHole.setNeighbors(boxes, size);
+    }
 
+    public static void setNeighbors(List<BlackHoleBox> boxes, int size) {
 	int boxWidth = 40;
 	int width = size;
 	int counter = 0;
