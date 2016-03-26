@@ -51,13 +51,23 @@ public class BlackHole extends AnchorPane {
     public void registerPlayer(BlackHolePlayer player) {
 	players.put(player, 1);
 	orderedPlayers.add(player);
+	if (player instanceof HumanPlayer) {
+	    HumanPlayer humanPlayer = (HumanPlayer) player;
+	    humanPlayer.setBlackHole(this);
+	}
     }
 
     public void start() throws IllegalMoveException {
 	for (BlackHolePlayer player : orderedPlayers) {
 	    player.setSize(size);
 	}
-	setNumber(orderedPlayers.get(0), orderedPlayers.get(0).play(cloneOfBoxes()));
+	if (!(orderedPlayers.get(0) instanceof HumanPlayer)) {
+	    setNumber(orderedPlayers.get(0), orderedPlayers.get(0).play(cloneOfBoxes()));
+	}
+    }
+
+    public BlackHolePlayer getCurrentPlayer() {
+	return orderedPlayers.get(activePlayer % orderedPlayers.size());
     }
 
     public BlackHoleNumber getNumberFromPlayer(BlackHolePlayer player) {
@@ -69,8 +79,10 @@ public class BlackHole extends AnchorPane {
 	players.put(player, players.get(player) + 1);
 	if (playable) {
 	    activePlayer++;
-	    BlackHolePlayer nextPlayer = orderedPlayers.get(activePlayer % orderedPlayers.size());
-	    setNumber(nextPlayer, nextPlayer.play(boxes));
+	    BlackHolePlayer nextPlayer = getCurrentPlayer();
+	    if (!(nextPlayer instanceof HumanPlayer)) {
+		setNumber(nextPlayer, nextPlayer.play(boxes));
+	    }
 	}
     }
 
@@ -108,7 +120,7 @@ public class BlackHole extends AnchorPane {
 	BlackHole.setNeighbors(boxes, size);
     }
 
-    public static void setNeighbors(List<BlackHoleBox> boxes, int size) {
+    private static void setNeighbors(List<BlackHoleBox> boxes, int size) {
 	int boxWidth = 40;
 	int width = size;
 	int counter = 0;
@@ -134,6 +146,10 @@ public class BlackHole extends AnchorPane {
 	if (freeBoxes == 1) {
 	    endOfGame();
 	}
+    }
+
+    public List<BlackHoleBox> getBoxes() {
+	return boxes;
     }
 
     public BlackHoleBox getBlackHole() {
@@ -163,6 +179,7 @@ public class BlackHole extends AnchorPane {
 	for (BlackHoleBox box : boxes) {
 	    clone.add(box.cloneOf());
 	}
+	BlackHole.setNeighbors(clone, size);
 	return clone;
     }
 }

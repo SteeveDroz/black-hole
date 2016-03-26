@@ -20,6 +20,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+    private static final String HUMAN_PLAYER = "Human Player";
+
     @Override
     public void start(Stage primaryStage) {
 	BorderPane root = new BorderPane();
@@ -29,6 +31,12 @@ public class Main extends Application {
 	HBox box = new HBox(5);
 	ComboBox<String> playerPicker1 = new ComboBox<String>();
 	ComboBox<String> playerPicker2 = new ComboBox<String>();
+
+	playerPicker1.getItems().add(HUMAN_PLAYER);
+	playerPicker2.getItems().add(HUMAN_PLAYER);
+	playerPicker1.setValue(HUMAN_PLAYER);
+	playerPicker2.setValue(HUMAN_PLAYER);
+
 	Button go = new Button("GO");
 	ComboBox<Integer> sizePicker = new ComboBox<Integer>();
 
@@ -43,6 +51,7 @@ public class Main extends Application {
 	    if (BlackHole.triangularValue(i) % 2 == 1) {
 		sizePicker.getItems().add(i);
 	    }
+	    sizePicker.setValue(6);
 	}
 
 	go.addEventHandler(ActionEvent.ACTION, new EventHandler<Event>() {
@@ -51,9 +60,9 @@ public class Main extends Application {
 	    public void handle(Event event) {
 		try {
 		    BlackHole blackHole = new BlackHole();
+		    blackHole.setSize(sizePicker.getValue());
 		    registerPlayer(playerPicker1.getValue(), 1, Color.RED, blackHole);
 		    registerPlayer(playerPicker2.getValue(), 2, Color.BLUE, blackHole);
-		    blackHole.setSize(sizePicker.getValue());
 		    root.setCenter(blackHole);
 		    blackHole.start();
 		} catch (IllegalMoveException e) {
@@ -85,33 +94,29 @@ public class Main extends Application {
     }
 
     private void registerPlayer(String selected, int id, Color color, BlackHole blackHole) {
-
-	BlackHolePlayer player1 = null;
+	if (selected == HUMAN_PLAYER) {
+	    blackHole.registerPlayer(new HumanPlayer("Human player " + id, color));
+	    return;
+	}
+	BlackHolePlayer player = null;
 	try {
 	    Class<?> playerClass = Class.forName("ai." + selected + ".Player");
 	    Constructor<?> playerConstructor = playerClass.getConstructor(new Class[] { String.class, Color.class });
-	    player1 = (BlackHolePlayer) playerConstructor.newInstance(new Object[] { selected + " " + id, color });
-	    blackHole.registerPlayer(player1);
+	    player = (BlackHolePlayer) playerConstructor.newInstance(new Object[] { selected + " " + id, color });
+	    blackHole.registerPlayer(player);
 	} catch (ClassNotFoundException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	} catch (NoSuchMethodException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	} catch (SecurityException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	} catch (InstantiationException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	} catch (IllegalAccessException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	} catch (IllegalArgumentException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	} catch (InvocationTargetException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
     }
