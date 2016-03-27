@@ -3,6 +3,7 @@ package com.github.steevedroz.blackhole;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
@@ -41,12 +42,17 @@ public class BlackHoleBox extends Pane {
 	return number;
     }
 
-    public void setNumber(BlackHoleNumber number) throws IllegalMoveException {
+    public void setNumber(BlackHoleNumber number) {
 	if (this.number != null) {
 	    throw new IllegalMoveException("This box is already taken.");
 	}
 	this.number = number;
-	getChildren().add(number);
+	Platform.runLater(new Runnable() {
+	    @Override
+	    public void run() {
+		getChildren().add(number);
+	    }
+	});
 	parent.fillBox();
     }
 
@@ -61,10 +67,18 @@ public class BlackHoleBox extends Pane {
     }
 
     public BlackHoleBox cloneOf() {
-	BlackHoleBox box = new BlackHoleBox(parent);
+	BlackHoleBox box = new BlackHoleBox(new BlackHole());
 	if (number != null) {
 	    box.number = number.cloneOf();
 	}
 	return box;
+    }
+
+    @Override
+    public String toString() {
+	if (getNumber() == null) {
+	    return "";
+	}
+	return getNumber().getPlayer().getName() + " (" + getNumber().getValue() + ")";
     }
 }
