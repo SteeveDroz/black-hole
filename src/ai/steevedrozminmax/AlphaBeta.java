@@ -2,6 +2,7 @@ package ai.steevedrozminmax;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.github.steevedroz.blackhole.BlackHole;
 import com.github.steevedroz.blackhole.BlackHoleBox;
@@ -34,23 +35,29 @@ public class AlphaBeta {
 	}
 	int nextNumber = numberOfFilledBoxes / 2 + 1;
 
-	Move bestMove = new Move();
-	bestMove.value = -minOrMax * Integer.MAX_VALUE;
+	List<Move> bestMoves = new ArrayList<Move>();
+	bestMoves.add(new Move());
+	bestMoves.get(0).value = -minOrMax * Integer.MAX_VALUE;
 	for (int i = 0; i < boxes.size(); i++) {
 	    if (boxes.get(i).getNumber() == null) {
 		List<BlackHoleBox> boxesClone = cloneOf(boxes);
 		boxesClone.get(i).setNumber(new BlackHoleNumber(minOrMax > 0 ? active : opponent, nextNumber));
-		Move testMove = getMove(boxesClone, depth - 1, -minOrMax, bestMove.value);
-		if (testMove.value * minOrMax > bestMove.value * minOrMax) {
-		    bestMove = testMove;
-		    bestMove.box = i;
-		    if (bestMove.value * minOrMax > parentValue * minOrMax) {
+		Move testMove = getMove(boxesClone, depth - 1, -minOrMax, bestMoves.get(0).value);
+		if (testMove.value == bestMoves.get(0).value) {
+		    testMove.box = i;
+		    bestMoves.add(testMove);
+		} else if (testMove.value * minOrMax > bestMoves.get(0).value * minOrMax) {
+		    bestMoves.clear();
+		    testMove.box = i;
+		    bestMoves.add(testMove);
+		    if (bestMoves.get(0).value * minOrMax > parentValue * minOrMax) {
 			break;
 		    }
 		}
 	    }
 	}
-	return bestMove;
+	Random random = new Random();
+	return bestMoves.get(random.nextInt(bestMoves.size()));
     }
 
     public boolean isFinal(List<BlackHoleBox> boxes) {
