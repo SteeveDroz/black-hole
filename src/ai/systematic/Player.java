@@ -11,8 +11,8 @@ public class Player extends BlackHolePlayer {
 
     private int boxCounter;
 
-    public Player(String name, Color color) {
-	super(name, color);
+    public Player(Color color, int playerId) {
+	super("Systematic", color, playerId);
 	boxCounter = 0;
     }
 

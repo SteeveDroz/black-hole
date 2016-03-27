@@ -13,13 +13,12 @@ import javafx.scene.paint.Color;
 public class HumanPlayer extends BlackHolePlayer {
     private BlackHole blackHole;
 
-    public HumanPlayer(String name, Color color) {
-	super(name, color);
+    public HumanPlayer(Color color, int playerId) {
+	super("Human Player", color, playerId);
     }
 
     @Override
     public int play(List<BlackHoleBox> boxes) {
-	// TODO Auto-generated method stub
 	return 0;
     }
 

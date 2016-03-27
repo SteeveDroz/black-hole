@@ -95,14 +95,14 @@ public class Main extends Application {
 
     private void registerPlayer(String selected, int id, Color color, BlackHole blackHole) {
 	if (selected == HUMAN_PLAYER) {
-	    blackHole.registerPlayer(new HumanPlayer("Human player " + id, color));
+	    blackHole.registerPlayer(new HumanPlayer(color, id));
 	    return;
 	}
 	BlackHolePlayer player = null;
 	try {
 	    Class<?> playerClass = Class.forName("ai." + selected + ".Player");
-	    Constructor<?> playerConstructor = playerClass.getConstructor(new Class[] { String.class, Color.class });
-	    player = (BlackHolePlayer) playerConstructor.newInstance(new Object[] { selected + " " + id, color });
+	    Constructor<?> playerConstructor = playerClass.getConstructor(new Class[] { Color.class, int.class });
+	    player = (BlackHolePlayer) playerConstructor.newInstance(new Object[] { color, id });
 	    blackHole.registerPlayer(player);
 	} catch (ClassNotFoundException e) {
 	    e.printStackTrace();
