@@ -79,17 +79,26 @@ public class AlphaBeta {
 	    if (box.getNumber() == null) {
 		continue;
 	    }
+	    boolean surrounded = true;
 	    if (box.getNumber().getPlayer() == active) {
 		for (BlackHoleBox neighbor : box.getNeighbors()) {
 		    if (neighbor.getNumber() == null) {
-			value -= box.getNumber().getValue();
+			value -= box.getNumber().getValue() / 2;
+			surrounded = false;
 		    }
+		}
+		if (surrounded) {
+		    value += box.getNumber().getValue();
 		}
 	    } else if (box.getNumber().getPlayer() == opponent) {
 		for (BlackHoleBox neighbor : box.getNeighbors()) {
 		    if (neighbor.getNumber() == null) {
-			value += box.getNumber().getValue();
+			value += box.getNumber().getValue() / 2;
+			surrounded = false;
 		    }
+		}
+		if (surrounded) {
+		    value -= box.getNumber().getValue();
 		}
 	    }
 	}
